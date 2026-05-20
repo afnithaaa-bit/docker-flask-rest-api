@@ -154,4 +154,4 @@ KNOWN ISSUES / NOTES:
 --------------------------------------------
 AUTHOR:
 --------------------------------------------
-Docker Capstone Project - AWS06 Batch
+Docker Capstone Project - Afnitha
