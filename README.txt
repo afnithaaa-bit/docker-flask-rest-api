@@ -10,6 +10,13 @@
 <p align="center">
   <b>Multi-container REST API deployed using Docker, AWS EC2, MySQL & Redis</b>
 </p>
+
+![Docker](https://img.shields.io/badge/Docker-Enabled-blue)
+![AWS EC2](https://img.shields.io/badge/AWS-EC2-orange)
+![MySQL](https://img.shields.io/badge/MySQL-Database-blue)
+![Redis](https://img.shields.io/badge/Redis-Cache-red)
+![Status](https://img.shields.io/badge/Status-Deployed-success)
+
 PROJECT NAME:
 Dockerized Python Flask REST API with MySQL and Redis using Docker Compose
 
@@ -164,6 +171,9 @@ KNOWN ISSUES / NOTES:
 - Ensure ports 5000, 3306, 6379 are open in security group
 
 --------------------------------------------
-AUTHOR:
---------------------------------------------
-Docker Capstone Project - Afnitha
+
+👨‍💻 Author
+
+**DevOps Portfolio Project by Afnitha**
+
+> Built as part of AWS DevOps Capstone training
