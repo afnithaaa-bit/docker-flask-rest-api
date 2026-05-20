@@ -1,3 +1,15 @@
+# 🚀 Dockerized Flask REST API (AWS DevOps Capstone)
+
+<p align="center">
+  <img src="https://img.shields.io/badge/DevOps-AWS-orange?style=for-the-badge&logo=amazon-aws" />
+  <img src="https://img.shields.io/badge/Docker-Compose-blue?style=for-the-badge&logo=docker" />
+  <img src="https://img.shields.io/badge/Python-Flask-green?style=for-the-badge&logo=python" />
+  <img src="https://img.shields.io/badge/CI/CD-GitHub_Actions-black?style=for-the-badge&logo=githubactions" />
+</p>
+
+<p align="center">
+  <b>Multi-container REST API deployed using Docker, AWS EC2, MySQL & Redis</b>
+</p>
 PROJECT NAME:
 Dockerized Python Flask REST API with MySQL and Redis using Docker Compose
 
