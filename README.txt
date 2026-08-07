@@ -177,3 +177,5 @@ KNOWN ISSUES / NOTES:
 **DevOps Portfolio Project by Afnitha**
 
 > Built as part of AWS DevOps Capstone training
+
+Terraform-managed EC2 t3.small
