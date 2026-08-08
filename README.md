@@ -1,424 +1,367 @@
-## \# Docker Flask REST API
+# Docker Flask REST API
+
+A simple Flask REST API that I used to practice Docker, CI/CD, AWS, and basic monitoring.
+
+I built the application, containerized it with Docker, created a CI/CD pipeline with GitHub Actions, published the Docker image to Docker Hub, and deployed the application to an AWS EC2 instance.
+
+## Technologies Used
 
-## 
+* Python
+* Flask
+* Docker
+* Docker Compose
+* MySQL
+* Redis
+* AWS EC2
+* GitHub Actions
+* Docker Hub
+* Terraform
+* Pytest
+* Prometheus
+* Grafana
 
-## A simple Flask REST API that I containerized and deployed on AWS EC2 as a hands-on Cloud/DevOps project.
+## Project Architecture
 
-## 
+```text
+                    GitHub Repository
+                           |
+                           v
+                    GitHub Actions
+                           |
+                  +--------+--------+
+                  |                 |
+               Run Tests        Docker Build
+                                    |
+                                    v
+                              Docker Hub
+                                    |
+                                    v
+                                AWS EC2
+                                    |
+                             Docker Compose
+                                    |
+                +-------------------+-------------------+
+                |                   |                   |
+                v                   v                   v
+          Flask App 1         Flask App 2            MySQL
+          Port 5000                                  |
+                                                     |
+                                                   Redis
+```
 
-## The main goal of this project was to practice the complete flow from writing an application to building, testing, and deploying it using Docker and GitHub Actions.
+## Application
 
-## 
+The project is a Flask REST API running inside Docker containers.
 
-## \## What I used
+The application uses:
 
-## 
+* Flask for the API
+* MySQL for the database
+* Redis for caching/service communication
+* Docker Compose to run the services together
 
-## \* Python / Flask
+The Flask application is available on port `5000`.
 
-## \* Docker
+I tested the application locally and on the EC2 server using:
 
-## \* Docker Compose
+```bash
+curl http://localhost:5000
+```
 
-## \* MySQL
+The application returns:
 
-## \* Redis
+```text
+Hello, World!
+```
 
-## \* AWS EC2
+## Docker
 
-## \* GitHub Actions
+The application is packaged using a Dockerfile based on Python 3.11.
 
-## \* Docker Hub
+Docker Compose is used to run the application and its dependencies.
 
-## \* Terraform
+The main services are:
 
-## \* Pytest
+```text
+Flask App 1
+Flask App 2
+MySQL
+Redis
+```
 
-## \* Prometheus
+Two Flask containers are used so that the project also demonstrates running multiple application containers.
 
-## \* Grafana
+To start the application locally:
 
-## 
+```bash
+docker compose up -d --build
+```
 
-## \## Project Setup
+To check the running containers:
 
-## 
+```bash
+docker ps
+```
 
-## The application runs in Docker containers along with MySQL and Redis.
+To stop the services:
 
-## 
+```bash
+docker compose down
+```
 
-## ```text
+## CI/CD Pipeline
 
-## &#x20;               GitHub
+I created a GitHub Actions pipeline that runs when code is pushed to the `main` branch or when a pull request is created.
 
-## &#x20;                  |
+The CI pipeline performs the following steps:
 
-## &#x20;                  v
+1. Checks out the repository
+2. Sets up Python
+3. Installs Python dependencies
+4. Builds the Docker image
+5. Runs pytest inside the Docker container
+6. Logs in to Docker Hub
+7. Pushes the Docker image to Docker Hub
 
-## &#x20;           GitHub Actions
+The project also has a deployment workflow that connects to the EC2 instance and deploys the application.
 
-## &#x20;            /           \\
+This helped me understand how automated testing, Docker builds, image publishing, and deployment work together in a CI/CD workflow.
 
-## &#x20;       Run Tests      Docker Build
+## Automated Testing
 
-## &#x20;                         |
+I added tests using `pytest`.
 
-## &#x20;                         v
+The tests are also executed inside the Docker container as part of the GitHub Actions workflow.
 
-## &#x20;                    Docker Hub
+Example:
 
-## &#x20;                         |
+```bash
+docker run --rm \
+  -e DATABASE_URI=sqlite:///:memory: \
+  afnitha/docker-flask-rest-api \
+  pytest
+```
 
-## &#x20;                         v
+The GitHub Actions pipeline is configured to fail if the tests fail.
 
-## &#x20;                      AWS EC2
+## Docker Hub
 
-## &#x20;                         |
+The Docker image is published to Docker Hub:
 
-## &#x20;                   Docker Compose
+```text
+afnitha/docker-flask-rest-api
+```
 
-## &#x20;                   /      |      \\
+This allows the image to be pulled and deployed on the EC2 server.
 
-## &#x20;                  /       |       \\
+## AWS EC2 Deployment
 
-## &#x20;             Flask      MySQL    Redis
+The application is deployed to an Ubuntu AWS EC2 instance.
 
-## ```
+After deployment, I verified that the containers were running and tested the API directly from the EC2 server:
 
-## 
+```bash
+docker ps
+```
 
-## \## CI/CD
+and:
 
-## 
+```bash
+curl http://localhost:5000
+```
 
-## I created a GitHub Actions workflow that runs when changes are pushed to the `main` branch.
+Response:
 
-## 
+```text
+Hello, World!
+```
 
-## The workflow:
+The deployment workflow is managed through GitHub Actions.
 
-## 
+## Terraform
 
-## 1\. Checks out the code
+Terraform configuration is included in the project for Infrastructure as Code.
 
-## 2\. Sets up Python
+The Terraform configuration defines AWS infrastructure such as:
 
-## 3\. Installs dependencies
+* AWS provider
+* EC2 instance
+* Security group
 
-## 4\. Builds the Docker image
+This gave me hands-on experience with creating AWS infrastructure using code instead of setting everything up manually.
 
-## 5\. Runs the tests inside the Docker container
+## Monitoring
 
-## 6\. Pushes the image to Docker Hub
+I configured Grafana dashboards for monitoring the EC2 environment.
 
-## 7\. Deploys the application to EC2
+The dashboards include:
 
-## 
+* CPU Usage
+* Memory Usage
+* Disk Free Space
+* EC2 Disk Usage
 
-## This helped me understand how CI/CD works in a real project instead of deploying everything manually.
+The project also includes configuration for Prometheus, cAdvisor, and Node Exporter as part of the monitoring setup.
 
-## 
+Grafana was used to create dashboards for viewing infrastructure metrics.
 
-## \## Docker
+## Security
 
-## 
+Environment-specific credentials are kept outside the Git repository.
 
-## The Flask application is packaged using a Dockerfile based on Python 3.11.
+The project uses:
 
-## 
+```text
+.env
+.env.example
+.gitignore
+```
 
-## Docker Compose is used to run the application and its dependencies.
+The real `.env` file is ignored by Git.
 
-## 
+The `.env.example` file provides example variables without exposing the actual credentials.
 
-## The main containers are:
+GitHub Actions credentials such as Docker Hub credentials are stored using GitHub Secrets.
 
-## 
+## Project Structure
 
-## \* Flask application
+```text
+docker-flask-rest-api/
+│
+├── app.py
+├── create_db.py
+├── drop_db.py
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+│
+├── .env.example
+├── .gitignore
+│
+├── tests/
+│   └── test_app.py
+│
+├── screenshots/
+│   ├── docker-flask-ci.png
+│   ├── docker-flask-deployment.png
+│   ├── docker-hub.png
+│   └── grafana-dashboard.png
+│
+├── .github/
+│   └── workflows/
+│       ├── ci.yml
+│       └── deploy.yml
+│
+└── terraform/
+    ├── main.tf
+    └── .terraform.lock.hcl
+```
 
-## \* MySQL
+## Screenshots
 
-## \* Redis
+### GitHub Actions CI
 
-## 
+![GitHub Actions CI](screenshots/docker-flask-ci.png)
 
-## The Flask application is available on port `5000`.
+The CI workflow successfully runs the automated tests, builds the Docker image, and publishes the image to Docker Hub.
 
-## 
+### EC2 Deployment
 
-## \## Testing
+![EC2 Deployment](screenshots/docker-flask-deployment.png)
 
-## 
+The GitHub Actions deployment workflow is used to deploy the application to the AWS EC2 instance.
 
-## I added pytest tests and also run them as part of the GitHub Actions pipeline.
+### Docker Hub
 
-## 
+![Docker Hub](screenshots/docker-hub.png)
 
-## The tests are executed inside the Docker image to make sure the containerized application works correctly.
+The Docker image is published to Docker Hub and can be used for deployment.
 
-## 
+### Grafana Monitoring
 
-## \## AWS EC2
+![Grafana Dashboard](screenshots/grafana-dashboard.png)
 
-## 
+Grafana dashboards were configured for CPU, memory, and disk monitoring.
 
-## The application is deployed to an Ubuntu EC2 instance.
+## Running the Project Locally
 
-## 
+Clone the repository:
 
-## After deployment, I verified the application directly on the server:
+```bash
+git clone https://github.com/afnithaaa-bit/docker-flask-rest-api.git
+```
 
-## 
+Move into the project directory:
 
-## ```bash
+```bash
+cd docker-flask-rest-api
+```
 
-## curl http://localhost:5000
+Create the environment file using `.env.example` as a reference.
 
-## ```
+Then start the application:
 
-## 
+```bash
+docker compose up -d --build
+```
 
-## Response:
+Check the containers:
 
-## 
+```bash
+docker ps
+```
 
-## ```text
+Test the API:
 
-## Hello, World!
+```bash
+curl http://localhost:5000
+```
 
-## ```
+Expected response:
 
-## 
+```text
+Hello, World!
+```
 
-## \## Terraform
+Stop the application:
 
-## 
+```bash
+docker compose down
+```
 
-## I also added Terraform configuration for the AWS infrastructure.
+## What I Learned
 
-## 
+This project gave me practical experience with several DevOps and cloud tools.
 
-## The Terraform configuration is used to define resources such as:
+I learned how to:
 
-## 
+* Build and run a Flask application using Docker
+* Use Docker Compose for multiple services
+* Work with MySQL and Redis containers
+* Write automated tests using pytest
+* Create CI/CD workflows using GitHub Actions
+* Build and publish Docker images to Docker Hub
+* Deploy containers to AWS EC2
+* Use Terraform for Infrastructure as Code
+* Configure Grafana dashboards
+* Work with environment variables and secrets
+* Troubleshoot Docker and Linux server issues
+* Monitor disk usage and manage limited EC2 resources
 
-## \* EC2 instance
+## Future Improvements
 
-## \* Security group
+Some improvements I would like to add in the future include:
 
-## \* AWS provider configuration
+* Nginx reverse proxy
+* HTTPS with SSL/TLS
+* Better application health checks
+* Production-grade monitoring
+* Centralized logging
+* Improved deployment strategy
+* Load balancing and high availability
 
-## 
+## Author
 
-## This gave me practical experience with Infrastructure as Code.
+**Afnitha Nithin Ali**
 
-## 
-
-## \## Monitoring
-
-## 
-
-## I added Prometheus and Grafana configuration to the project for monitoring.
-
-## 
-
-## The monitoring setup also includes:
-
-## 
-
-## \* Prometheus
-
-## \* Grafana
-
-## \* cAdvisor
-
-## \* Node Exporter
-
-## 
-
-## I used Grafana dashboards to monitor system and container metrics such as CPU and memory usage.
-
-## 
-
-## \## Security
-
-## 
-
-## I keep database credentials and other environment-specific values outside the Git repository.
-
-## 
-
-## The project uses:
-
-## 
-
-## ```text
-
-## .env
-
-## .env.example
-
-## .gitignore
-
-## ```
-
-## 
-
-## The real `.env` file is ignored by Git, while `.env.example` shows the required variables without exposing real credentials.
-
-## 
-
-## GitHub Actions credentials are stored using GitHub Secrets.
-
-## 
-
-## \## Project Structure
-
-## 
-
-## ```text
-
-## docker-flask-rest-api/
-
-## │
-
-## ├── app.py
-
-## ├── Dockerfile
-
-## ├── docker-compose.yml
-
-## ├── requirements.txt
-
-## ├── .env.example
-
-## ├── .gitignore
-
-## ├── README.md
-
-## │
-
-## ├── tests/
-
-## │   └── test\_app.py
-
-## │
-
-## ├── .github/
-
-## │   └── workflows/
-
-## │       ├── ci.yml
-
-## │       └── deploy.yml
-
-## │
-
-## └── terraform/
-
-## &#x20;   ├── main.tf
-
-## &#x20;   └── .terraform.lock.hcl
-
-## ```
-
-## 
-
-## \## Running Locally
-
-## 
-
-## Clone the repository:
-
-## 
-
-## ```bash
-
-## git clone https://github.com/afnithaaa-bit/docker-flask-rest-api.git
-
-## cd docker-flask-rest-api
-
-## ```
-
-## 
-
-## Create your `.env` file using `.env.example` as a reference.
-
-## 
-
-## Then start the application:
-
-## 
-
-## ```bash
-
-## docker compose up -d --build
-
-## ```
-
-## 
-
-## Test it:
-
-## 
-
-## ```bash
-
-## curl http://localhost:5000
-
-## ```
-
-## 
-
-## To stop the containers:
-
-## 
-
-## ```bash
-
-## docker compose down
-
-## ```
-
-## 
-
-## \## What I Learned
-
-## 
-
-## While building this project, I worked with:
-
-## 
-
-## \* Dockerizing a Flask application
-
-## \* Docker Compose
-
-## \* Git and GitHub
-
-## \* GitHub Actions CI/CD
-
-## \* Docker Hub
-
-## \* AWS EC2
-
-## \* Terraform
-
-## \* MySQL and Redis
-
-## \* Automated testing
-
-## \* Prometheus and Grafana
-
-## \* Environment variables and secrets
-
-## \* Deploying and troubleshooting containers on Linux
-
-## 
-
-## This project helped me understand how these tools fit together in a complete DevOps workflow.
-
-
-
+This project was built as a hands-on Cloud and DevOps learning project.
